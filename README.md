@@ -1,66 +1,57 @@
-# Airline-Booking
 # ✈️ Airline Booking Microservices System
 
-A distributed backend system for managing flight search, bookings, and notifications using a microservices architecture.
-
-Built with Node.js, Express, MySQL, and RabbitMQ (AWS-ready).
+A scalable airline booking backend built using a **microservices architecture**.  
+Handles flight search, booking, and notifications using **REST APIs + RabbitMQ**.
 
 ---
 
 ## 🔗 Services & Repositories
 
-| Service | Description | Link |
-|--------|-------------|------|
-| API Gateway | Central routing, request handling, auth proxy | https://github.com/dhiman31/API_Gateway |
-| Auth Service | User authentication, JWT handling | https://github.com/dhiman31/Auth_Service |
-| Flight Service | Flight data, search, filters | https://github.com/dhiman31/Flights-And-Search-Service |
-| Booking Service | Booking flow & transactions | https://github.com/dhiman31/Booking_Service |
-| Reminder Service | Email notifications & scheduling | https://github.com/dhiman31/Reminder_Service |
+| Service | Responsibility | Link |
+|--------|----------------|------|
+| API Gateway | Routing, entry point | https://github.com/dhiman31/API_Gateway |
+| Auth Service | Authentication, JWT | https://github.com/dhiman31/Auth_Service |
+| Flight Service | Flight search & data | https://github.com/dhiman31/Flights-And-Search-Service |
+| Booking Service | Booking & transactions | https://github.com/dhiman31/Booking_Service |
+| Reminder Service | Email notifications | https://github.com/dhiman31/Reminder_Service |
 
 ---
 
 ## 📌 Overview
 
-This project demonstrates a real-world airline booking backend where features are split into independent services.
+A real-world style system where services are independent and communicate via:
+- REST APIs (synchronous)
+- RabbitMQ (asynchronous)
 
-It supports:
-- Flight search  
-- Ticket booking  
-- Seat management  
-- Email notifications & reminders  
-
-Uses REST APIs + RabbitMQ for async communication.
+### Flow
+- Search flights  
+- Book tickets  
+- Validate seats  
+- Send notifications  
 
 ---
 
 ## ✨ Features
 
-### User Features
-- Search flights with filters  
+- Flight search with filters  
 - Real-time seat availability  
 - Secure authentication (JWT)  
 - Booking confirmation emails  
 - Automated reminders  
 
-### Technical Features
-- API Gateway (single entry point)  
-- Event-driven architecture (RabbitMQ)  
-- Background jobs (cron)  
-- Scalable cloud-ready design  
-
 ---
 
 ## 🏗️ Tech Stack
 
-- Backend: Node.js, Express  
-- Database: MySQL (Sequelize)  
-- Messaging: RabbitMQ  
-- Email/Jobs: Nodemailer, Node-Cron  
-- Cloud: AWS (EC2, RDS, Load Balancer)  
+- Node.js, Express  
+- MySQL (Sequelize ORM)  
+- RabbitMQ  
+- Nodemailer, Node-Cron  
+- AWS (EC2, RDS, Load Balancer)  
 
 ---
 
-## 🔄 System Flow
+## 🔄 Workflow
 
 1. Search → Gateway → Flight Service  
 2. Booking → Gateway → Booking → Flight Service → DB  
@@ -70,14 +61,112 @@ Uses REST APIs + RabbitMQ for async communication.
 
 ## 🚀 Run Locally
 
-### Requirements
+### Prerequisites
 - Node.js  
 - MySQL  
 - RabbitMQ  
 
-### Setup
+---
+
+### 1. Clone Repositories
+
+```bash
+git clone https://github.com/dhiman31/API_Gateway
+git clone https://github.com/dhiman31/Auth_Service
+git clone https://github.com/dhiman31/Flights-And-Search-Service
+git clone https://github.com/dhiman31/Booking_Service
+git clone https://github.com/dhiman31/Reminder_Service
+```
+
+---
+
+### 2. Create Databases
+
+```sql
+CREATE DATABASE auth_db;
+CREATE DATABASE booking_db;
+CREATE DATABASE flights_search_db;
+```
+
+---
+
+### 3. Setup Environment Variables (.env)
+
+#### API Gateway
+```
+PORT=3005
+AUTH_SERVICE=http://localhost:7000
+BOOKING_SERVICE=http://localhost:5000
+FLIGHT_SERVICE=http://localhost:3000
+```
+
+#### Auth Service
+```
+PORT=7000
+JWT_KEY=secret
+SALT=abc123
+DB_SYNC=true
+```
+
+#### Flight Service
+```
+PORT=3000
+DB_SYNC=true
+```
+
+#### Booking Service
+```
+PORT=5000
+DB_SYNC=true
+FLIGHT_SERVICE_PATH=http://localhost:3000
+USER_SERVICE_PATH=http://localhost:7000
+MESSAGE_BROKER_URL=amqp://localhost
+```
+
+#### Reminder Service
+```
+PORT=3004
+EMAIL_ID=your_email
+EMAIL_PASS=your_password
+MESSAGE_BROKER_URL=amqp://localhost
+```
+
+---
+
+### 4. Install & Run (each service)
 
 ```bash
 npm install
 npx sequelize db:migrate
 npm start
+```
+
+---
+
+### ▶️ Startup Order
+
+MySQL → RabbitMQ → Auth → Flight → Reminder → Booking → Gateway  
+
+---
+
+### 🌐 Access
+
+http://localhost:3005
+
+---
+
+## ☁️ Deployment
+
+- EC2 for services  
+- RDS for MySQL  
+- Load Balancer for Gateway  
+- Auto Scaling enabled  
+
+---
+
+## 📡 Sample APIs
+
+```bash
+GET  /home
+POST /flightservice/api/v1/flights
+```
